@@ -19,6 +19,7 @@
                 v-for="item in todoList"
                 v-bind:todo="item"
                 v-bind:key="item.id"
+                v-on:suppress-item="handleItemSuppression"
         ></todo-item>
     </ol>
 </div>
@@ -26,7 +27,13 @@
 <script>
 	Vue.component('todo-item', {
 		props: ['todo'],
-		template: '<li>{{ todo.text }}</li>'
+		methods: {
+			suppressItem: function (e) {
+				e.preventDefault();
+				this.$emit('suppress-item', this.todo.id);
+			}
+		},
+		template: '<li>{{ todo.text }} <button v-on:click="suppressItem" >  supprimer</button></li>'
 	});
 
 	Vue.component('form-add', {
@@ -62,7 +69,10 @@
 			handleItemAddition: function(itemText){
 				const lastElemId = this.todoList[this.todoList.length - 1].id;
 				this.todoList.push({id: lastElemId + 1, text: itemText})
-            }
+            },
+			handleItemSuppression: function(itemId){
+				this.todoList = this.todoList.filter(item => item.id != itemId)
+			}
         }
 	});
 </script>
