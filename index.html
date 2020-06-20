@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>todoList</title>
+</head>
+<!-- development version, includes helpful console warnings -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<body>
+<div id="app-7">
+    <form-add v-on:add-item="handleItemAddition" ></form-add>
+    <ol>
+        <!--
+          Now we provide each todo-item with the todo object
+          it's representing, so that its content can be dynamic.
+          We also need to provide each component with a "key"
+        -->
+        <todo-item
+                v-for="item in todoList"
+                v-bind:todo="item"
+                v-bind:key="item.id"
+        ></todo-item>
+    </ol>
+</div>
+</body>
+<script>
+	Vue.component('todo-item', {
+		props: ['todo'],
+		template: '<li>{{ todo.text }}</li>'
+	});
+
+	Vue.component('form-add', {
+		data: function () {
+			return {
+				userInput: ""
+			}
+		},
+		methods: {
+			addItem: function (e) {
+				e.preventDefault();
+				this.$emit('add-item', this.userInput);
+			}
+		},
+		template:
+        `<form v-on:submit="addItem">
+            <label for="todoContent">contenu de votre tache</label>
+            <input type="text" id="todoContent" placeholder="contenu du todo" v-model="userInput"/>
+            <input type="submit" content="ajouter tache"/>
+        </form>`
+	});
+
+	const app7 = new Vue({
+		el: '#app-7',
+		data: {
+			todoList: [
+				{id: 0, text: 'Vegetables'},
+				{id: 1, text: 'Cheese'},
+				{id: 2, text: 'Whatever else humans are supposed to eat'}
+			]
+		},
+		methods: {
+			handleItemAddition: function(itemText){
+				const lastElemId = this.todoList[this.todoList.length - 1].id;
+				this.todoList.push({id: lastElemId + 1, text: itemText})
+            }
+        }
+	});
+</script>
+</html>
